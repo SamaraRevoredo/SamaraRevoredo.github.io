@@ -13,7 +13,7 @@ Samara Revoredo da Silva
 *23-10-2022*
 
 == Negativo de uma imagem
-[source,python]
+[source,ruby]
 ----
 # -*- coding: utf-8 -*-
 """
@@ -34,7 +34,7 @@ cv2.imshow('image',img)
 cv2.waitKey()
 ----
 == Troca regiões
-[source,python]
+[source,ruby]
 ----
 # -*- coding: utf-8 -*-
 """
@@ -72,7 +72,7 @@ cv2.imshow('image',aux)
 cv2.waitKey()
 ----
 == Contagem de objetos e bolhas
-[source,python]
+[source,ruby]
 ----
 # -*- coding: utf-8 -*-
 """
@@ -116,7 +116,7 @@ cv2.imshow('image',img)
 cv2.waitKey()
 ----
 == Histograma equalizado
-[source,python]
+[source,ruby]
 ----
 # -*- coding: utf-8 -*-
 """
@@ -151,7 +151,7 @@ cv2.imshow('image',img)
 cv2.waitKey()
 ----
 == Laplaciano do gaussiano
-[source,python]
+[source,ruby]
 ----
 import cv2
 import numpy as np
@@ -235,7 +235,7 @@ while True:
 cv2.destroyAllWindows()
 ----
 == Filtro TiltShift
-[source,python]
+[source,ruby]
 ----
 # -*- coding: utf-8 -*-
 """
