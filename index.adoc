@@ -1,15 +1,327 @@
 //
 // file: index.adoc
 //
-= Samara's Blog
+= Processamento Digital de Imagens com Opencv e Python
+
+Samara Revoredo da Silva
+
 :sectnums:
 :toc: left
 :toclevels: 3
-
 :toc!:
 
-== Blogging with Github Pages and Asciidoc
+*23-10-2022*
 
-*2015-12-22*
+== Negativo de uma imagem
+[source,python]
+----
+# -*- coding: utf-8 -*-
+"""
+Spyder Editor
 
-Although 2015 is quickly coming to and end, I look back on it fondly. It was a great year during which I learned a lot and discovered a few sofware gems, one of which is https://en.wikipedia.org/wiki/AsciiDoc[Asciidoc]. When you use Asciidoc to create documents you are https://medium.com/@chacon/living-the-future-of-technical-writing-2f368bd0a272#.ivrqucdon[Living the Future of Technical Writing]!
+Autor: Samara R. S.
+"""
+import numpy as np
+from matplotlib import pyplot as plt
+import cv2
+
+img = cv2.imread('biel.png',cv2.IMREAD_GRAYSCALE)
+rows,cols = img.shape
+for i in range(0,rows):
+    for j in range(0,cols):
+        img[i,j] = 255-img[i,j]
+cv2.imshow('image',img)
+cv2.waitKey()
+----
+== Troca regiões
+[source,python]
+----
+# -*- coding: utf-8 -*-
+"""
+Created on Sun Oct 23 12:53:47 2022
+
+@author: samar
+"""
+# Observacao: para esse codigo funcionar a imagem precisa ser quadrada
+import numpy as np
+from matplotlib import pyplot as plt
+import cv2
+img = cv2.imread('biel.png',cv2.IMREAD_GRAYSCALE)
+MAX,MAX2 = img.shape
+aux = img.copy()
+# A to D
+for i in range(0,int(MAX/2)):
+    for j in range(0,int(MAX/2)):
+        aux[int(i+(MAX/2)),int(j+(MAX/2))] = img[i,j]
+# B to C
+for i in range(0,int(MAX/2)):
+    for j in range(int(MAX/2),MAX):
+        aux[int(i-(MAX/2)),int(j-(MAX/2))] = img[i,j]
+# D to A
+for i in range(int(MAX/2),MAX):
+    for j in range(int(MAX/2),MAX):
+        aux[int(i-(MAX/2)),int(j-(MAX/2))] = img[i,j]
+# C to B
+for i in range(int(MAX/2),MAX):
+    for j in range(0,int(MAX/2)):
+        aux[int(i-(MAX/2)),int(j-(MAX/2))] = img[i,j]
+
+cv2.imshow('image',img)
+cv2.waitKey()
+cv2.imshow('image',aux)
+cv2.waitKey()
+----
+== Contagem de objetos e bolhas
+[source,python]
+----
+# -*- coding: utf-8 -*-
+"""
+Created on Sun Oct 23 18:43:06 2022
+
+@author: samar
+"""
+import numpy as np
+from matplotlib import pyplot as plt
+import cv2
+from skimage.segmentation import flood, flood_fill
+img = cv2.imread('bolhas.png',cv2.IMREAD_GRAYSCALE)
+
+cols,rows = img.shape
+print(img[0,0])
+for i in range(0,cols):
+    img[i,0] = 255
+    img[i,rows-1] = 255
+for i in range(0,rows):
+    img[0,i] = 255
+    img[cols-1,i] = 255
+
+img = flood_fill(img, (0,0), 0)
+img = flood_fill(img,(0,0),30)
+num_obj = 0
+for i in range(0,rows):
+    for j in range(0,cols):
+        if img[i,j] == 255:
+            num_obj += 1
+            img = flood_fill(img,(i, j),200)
+
+print('numero total de objetos = ',num_obj)
+com_furo = 0
+for i in range(0,rows):
+    for j in range(0, cols):
+        if img[i,j] == 0:
+                img = flood_fill(img,(i,j),200)
+                com_furo += 1
+print('Total de objetos com furo: ',com_furo)       
+cv2.imshow('image',img)
+cv2.waitKey()
+----
+== Histograma equalizado
+[source,python]
+----
+# -*- coding: utf-8 -*-
+"""
+Created on Sun Oct 23 20:55:49 2022
+
+@author: samar
+"""
+
+import cv2
+from copy import copy
+import numpy as np
+from matplotlib import pyplot as plt
+
+img = cv2.imread('biel.png',cv2.IMREAD_GRAYSCALE)
+cv2.imshow('image',img)
+cv2.waitKey()
+hist = cv2.calcHist([img],[0],None,[256],[0,256])
+plt.plot(hist)
+hist_acum = []
+hist_acum.append(int(hist[0]))
+for i in hist[1:]:
+    hist_acum.append(hist_acum[len(hist_acum)-1]+int(i))
+cols,rows = img.shape
+for i in range(0,rows):
+    for j in range(0,cols):
+        img[i,j] = np.round(hist_acum[img[i,j]]*255/(rows*cols))
+
+hist_eq = cv2.calcHist([img],[0],None,[256],[0,256])
+plt.plot(hist_eq)
+plt.show()
+cv2.imshow('image',img)
+cv2.waitKey()
+----
+== Laplaciano do gaussiano
+[source,python]
+----
+import cv2
+import numpy as np
+
+def menu():
+    print("\nPressione a tecla para ativar o filtro:"
+          "\na - calcular modulo"
+          "\nm - media"
+          "\ng - gauss"
+          "\nv - vertical"
+          "\nh - horizontal"
+          "\nl - laplaciano"
+          "\nx - laplaciano do gaussiano"
+          "\nesc - sair\n")
+
+media = np.ones([3,3],dtype=np.float32)
+gauss = np.array([[1,2,1],
+                 [2,4,2],
+                 [1,2,1]],dtype=np.float32)
+horizontal = np.array([[-1,0,1],
+                 [-2,0,2],
+                 [-1,0,1]],dtype=np.float32)
+vertical = np.array([[-1,-2,-1],
+                 [0,0,0],
+                 [1,2,1]],dtype=np.float32)
+laplacian = np.array([[0,-1,0],
+                 [-1,4,-1],
+                 [0,-1,0]],dtype=np.float32)
+lapgauss = np.array([[0,0,1,0,0],
+                     [0,1,2,1,0],
+                     [1,2,-16,2,1],
+                     [0,1,2,1,0],
+                     [0,0,1,0,0]],dtype=np.float32)
+mask = media.copy()
+img = cv2.imread("biel.png",0)
+rows,cols = img.shape
+mask = cv2.scaleAdd(mask,1/9.0,np.zeros([3,3],dtype=np.float32))
+absolute = True
+
+menu()
+case = -1
+while True:
+    nova = img.copy()
+    cv2.flip(nova,1,nova)
+    cv2.imshow("entrada", nova)
+    nova32 = np.array(nova,dtype=np.float32)
+    frameFiltered = cv2.filter2D(nova32,-1,mask,anchor=(1,1))
+    if absolute:
+        frameFiltered = abs(frameFiltered)
+    result = np.array(frameFiltered,dtype=np.uint8)
+    cv2.imshow("saida",result)
+    case = cv2.waitKey(10)
+    if case == ord('a'):
+        menu()
+        absolute = not absolute
+    elif case == ord('m'):
+        menu()
+        mask = media.copy()
+        mask = cv2.scaleAdd(mask,1/9.0,np.zeros([3,3],dtype=np.float32))
+    elif case == ord('g'):
+        menu()
+        mask = gauss.copy()
+        mask = cv2.scaleAdd(mask, 1/16.0, np.zeros([3, 3],dtype=np.float32))
+    elif case == ord('h'):
+        menu()
+        mask = horizontal.copy()
+    elif case == ord('v'):
+        menu()
+        mask = vertical.copy()
+    elif case == ord('l'):
+        menu()
+        mask = laplacian.copy()
+    elif case == ord('x'):
+        menu()
+        mask = lapgauss.copy()
+    elif case == 27:
+        break
+    else:
+        pass
+
+cv2.destroyAllWindows()
+----
+== Filtro TiltShift
+[source,python]
+----
+# -*- coding: utf-8 -*-
+"""
+Created on Sun Oct 23 23:00:31 2022
+
+@author: samar
+"""
+import cv2
+import numpy as np
+
+l1 = 0
+l2 = 0
+d = 0
+y = 0
+delta = 0
+
+img = cv2.imread("nina.jpg")
+img = cv2.cvtColor(img, cv2.COLOR_BGR2HSV).astype("float32")
+(h,s,v) = cv2.split(img)
+s = s*1.5
+s = np.clip(s,0,255)
+img = cv2.merge([h,s,v])
+img = cv2.cvtColor(img.astype("uint8"), cv2.COLOR_HSV2BGR)
+img = np.array(img,dtype=np.float32)
+
+
+height, width, depth = img.shape
+
+media = np.ones([3,3],dtype=np.float32)
+mask = cv2.scaleAdd(media,1/9.0,np.zeros([3,3],dtype=np.float32))
+img2 = img.copy()
+for i in range(10):
+    img2 = cv2.filter2D(img2,-1,mask,anchor=(1,1))
+
+result = np.zeros([height, width, depth])
+
+def sety(l):
+    global l1, l2, y, delta
+    y = l
+    l1 = y - int(delta/2)
+    l2 =  y + int(delta/2)
+    applyTilt()
+
+def setdelta(l):
+    global l1, l2, y, delta
+    delta = l
+    l1 = y - int(delta/2)
+    l2 =  y + int(delta/2)
+    applyTilt()
+
+def setd(dv):
+    global d
+    d = dv
+    applyTilt()
+
+def alpha(x, l1, l2, d):
+    return (0.5 * (np.tanh((x-l1)/(d+0.0001)) - np.tanh((x-l2)/(d+0.0001))))
+
+def tilt_filter():
+    global height, width, l1, l2, d
+    array = np.ones([height,width])
+    for y in range(height):
+        array[y,:] *= alpha(y, l1, l2, d)
+    return np.array(array,dtype=np.float32)
+
+def applyTilt():
+    global height, width, l1, l2, d, result
+    filtro = tilt_filter()
+
+    filtro_negativo = np.ones([height, width], dtype=np.float32) - filtro
+    for i in range(depth):
+        result[:,:,i] = cv2.multiply(filtro,img[:,:,i])
+        result[:,:,i] += cv2.multiply(filtro_negativo,img2[:,:,i])
+
+    cv2.imshow("tilt",np.array(result,dtype=np.uint8))
+
+cv2.imshow("tilt",np.array(img,dtype=np.uint8))
+trackbarName = "Y " + str(height)
+cv2.createTrackbar(trackbarName,"tilt",l1,height,sety)
+trackbarName = "DELTA " + str(height)
+cv2.createTrackbar(trackbarName,"tilt",l2,height,setdelta)
+trackbarName = "D " + str(100)
+cv2.createTrackbar(trackbarName,"tilt",d,100,setd)
+
+cv2.waitKey(0)
+cv2.imwrite("tilt.jpg",result)
+cv2.destroyAllWindows()
+
+----
