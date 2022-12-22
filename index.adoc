@@ -127,8 +127,10 @@ cv2.imshow('image',img)
 cv2.waitKey()
 ----
 A saída desse programa para a imagem das bolhas abaixo foi: 
-- numero total de objetos =  21
-- Total de objetos com furo:  7
+
+*- Numero total de objetos:  21*
+
+*- Total de objetos com furo:  7*
 
 image::imagens/bolhas.png[title='Original']
 image::imagens/contabolhas.png[title='Modificada pelo código']
@@ -352,3 +354,151 @@ cv2.destroyAllWindows()
 
 ----
 image::imagens/tiltshift.png[title='Filtros TiltShift']
+
+== Transformada Discreta de Fourier (DFT) e Filtro Homórfico
+
+Neste exercício foi calculado a transformada discreta de fourier da imagem abaixo e depois foi feito um filtro homórfico para melhorar a iluminação do lugar (foi utilizado uma outra imagem para teste do código pois a que estava sendo pedida no exercício não foi possível baixar)
+
+image::imagens/guerra.png[title='Figura original']
+
+[source,ruby]
+----
+import cv2
+import numpy as np
+from math import exp, sqrt
+gh, gl, c, d0 = 0, 0, 0, 0
+g, cv, dv = 0,0,0
+
+def Filtro():
+    global gh, gl, c, d0, complex
+    du = np.zeros(complex.shape, dtype=np.float32)
+    for u in range(dft_M):
+        for v in range(dft_N):
+            du[u,v] = sqrt((u-dft_M/2.0)*(u-dft_M/2.0)+(v-dft_N/2.0)*(v-dft_N/2.0))
+
+    du2 = cv2.multiply(du,du) / (d0*d0)
+    re = np.exp(- c * du2)
+    H = (gh - gl) * (1 - re) + gl
+
+    filtered = cv2.mulSpectrums(complex,H,0)
+
+    filtered = np.fft.ifftshift(filtered)
+    filtered = cv2.idft(filtered)
+    filtered = cv2.magnitude(filtered[:,:,0], filtered[:,:,1])
+
+    cv2.normalize(filtered,filtered,0, 1, cv2.NORM_MINMAX)
+    filtered = np.exp(filtered)
+    cv2.normalize(filtered, filtered,0, 1, cv2.NORM_MINMAX)
+
+    cv2.imshow("homomorfico", filtered)
+
+def setgl(g):
+    global gl
+    gl = g/10.0
+    if gl > gh:
+        gl = gh-1
+        gl = g / 10.0
+    Filtro()
+
+def setgh(g):
+    global gh
+    gh = g/10.0
+    if 1 > gh:
+        gh = 1
+        gh = g / 10.0
+    if gl > gh:
+        gh = gl + 1
+        gh = g / 10.0
+    Filtro()
+
+def setc(cv):
+    global c
+    if cv == 0:
+        cv = 1
+    c = cv/1000.0
+    Filtro()
+
+def setd0(dv):
+    global d0
+    d0 = dv/10.0
+    if d0 == 0:
+        d0 = 1
+        d0 = dv / 10.0
+    Filtro()
+
+
+img = cv2.imread("guerra.png", 0)
+cv2.imshow("original", img)
+img = np.float32(img)
+height, width = img.shape
+
+dft_M = cv2.getOptimalDFTSize(height)
+dft_N = cv2.getOptimalDFTSize(width)
+padded = cv2.copyMakeBorder(img, 0, dft_M-height,0,dft_N-width, cv2.BORDER_CONSTANT, 0) + 1
+padded = np.log(padded)
+complex = cv2.dft(padded,flags=cv2.DFT_COMPLEX_OUTPUT)
+complex = np.fft.fftshift(complex)
+img_back = 20*np.log(cv2.magnitude(complex[:,:,0],complex[:,:,1]))
+cv2.imshow("fft", np.uint8(img_back))
+cv2.imshow("DFT", img)
+
+trackbarName = "GL "
+cv2.createTrackbar(trackbarName,"DFT",g,100,setgl)
+trackbarName = "GH "
+cv2.createTrackbar(trackbarName,"DFT",g,100,setgh)
+trackbarName = "C "
+cv2.createTrackbar(trackbarName,"DFT",cv,100,setc)
+trackbarName = "D0 "
+cv2.createTrackbar(trackbarName,"DFT",dv,dft_M,setd0)
+
+
+cv2.waitKey(0)
+cv2.destroyAllWindows()
+----
+Espectro de fourier da frequência da imagem
+
+image::imagens/espectro.png[title='Espectro no domínio da frequência']
+
+Filtro Homórfico para melhorar a iluminação
+
+image::imagens/DFT.png[title='Filtro Homórfico']
+
+== Algoritmo k-means
+
+[source,ruby]
+----
+import cv2
+import numpy as np
+import matplotlib.pyplot as plt
+
+image = cv2.imread("nina.jpg")
+
+image1 = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+
+pixel_values = image1.reshape((-1, 3))
+pixel_values = np.float32(pixel_values)
+
+criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 100, 0.2)
+
+k = 10
+_, labels, (centers) = cv2.kmeans(pixel_values, k, None, criteria, 10, cv2.KMEANS_RANDOM_CENTERS)
+
+centers = np.uint8(centers)
+
+labels = labels.flatten()
+
+segmented_image = centers[labels.flatten()]
+
+segmented_image = segmented_image.reshape(image1.shape)
+
+plt.subplot(211),plt.imshow(image1)
+plt.title('Image Original'), plt.xticks([]), plt.yticks([])
+plt.subplot(212),plt.imshow(segmented_image)
+plt.title('Image Segmentée'), plt.xticks([]), plt.yticks([])
+plt.show()
+----
+
+Resultado do código k-means com 10 rodadas diferentes do algoritmo e iniciando o centro de forma aleatória
+
+image::imagens/kmeans.jpg[title='Kmeans']
+
