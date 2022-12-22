@@ -36,7 +36,7 @@ cv2.imshow('image',img)
 cv2.waitKey()
 ----
 
-image::images/negativo.png[title='Negativo da imagem']
+image::imagens/negativo.png[title='Negativo da imagem']
 
 == Troca regiões
 
@@ -79,7 +79,7 @@ cv2.waitKey()
 cv2.imshow('image',aux)
 cv2.waitKey()
 ----
-image::images/trocaregioes.png[title='troca regiões']
+image::imagens/trocaregioes.png[title='troca regiões']
 
 == Contagem de objetos e bolhas
 Para realizar a contagem de bolhas em uma figura primeiramente eliminamos as bolhas indefinidas que estão nas regiões das extremidades da imagem e então preenchemos as bolhas com furos para fazer uma contagem total
@@ -126,12 +126,12 @@ print('Total de objetos com furo: ',com_furo)
 cv2.imshow('image',img)
 cv2.waitKey()
 ----
-A saída desse programa para a imagem das bolhas abaixo foi:
+A saída desse programa para a imagem das bolhas abaixo foi: 
 - numero total de objetos =  21
 - Total de objetos com furo:  7
 
-image::images/bolhas.png[title='Original']
-image::images/contabolhas.png[title='Modificada pelo código']
+image::imagens/bolhas.png[title='Original']
+image::imagens/contabolhas.png[title='Modificada pelo código']
 
 == Histograma equalizado
 [source,ruby]
@@ -169,7 +169,7 @@ cv2.imshow('image',img)
 cv2.waitKey()
 ----
 
-image::images/equalize.png[title='Histograma equalizado']
+image::imagens/equalize.png[title='Histograma equalizado']
 
 == Laplaciano do gaussiano
 [source,ruby]
@@ -256,9 +256,9 @@ while True:
 cv2.destroyAllWindows()
 ----
 
-image::images/lap.png[title='Filtro Laplaciano']
-image::images/gauss.png[title='Filtro Gauss']
-image::images/lapgauss.png[title='Filtro Laplaciano-Gaussiano']
+image::imagens/lap.png[title='Filtro Laplaciano']
+image::imagens/gauss.png[title='Filtro Gauss']
+image::imagens/lapgauss.png[title='Filtro Laplaciano-Gaussiano']
 
 == Filtro TiltShift
 [source,ruby]
@@ -351,4 +351,4 @@ cv2.imwrite("tilt.jpg",result)
 cv2.destroyAllWindows()
 
 ----
-image::images/tiltshift.png[title='Filtros TiltShift']
+image::imagens/tiltshift.png[title='Filtros TiltShift']
