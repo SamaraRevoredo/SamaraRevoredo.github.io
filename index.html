@@ -454,6 +454,9 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sect1">
 <h2 id="negativo-de-uma-imagem"><a class="anchor" href="#negativo-de-uma-imagem"></a>1. Negativo de uma imagem</h2>
 <div class="sectionbody">
+<div class="paragraph">
+<p>Este código consiste em pegar o valor máximo do pixel e diminuir dele próprio para assim pegar valores que em teoria são o oposto da imagem anterior.</p>
+</div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-ruby" data-lang="ruby"># -*- coding: utf-8 -*-
@@ -475,11 +478,20 @@ cv2.imshow('image',img)
 cv2.waitKey()</code></pre>
 </div>
 </div>
+<div class="imageblock">
+<div class="content">
+<img src="data:image/png;base64," alt="negativo">
+</div>
+<div class="title">Figure 1. Negativo da imagem</div>
+</div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="troca-regiões"><a class="anchor" href="#troca-regiões"></a>2. Troca regiões</h2>
 <div class="sectionbody">
+<div class="paragraph">
+<p>Este código faz a troca dos quadrantes de uma região por outra.</p>
+</div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-ruby" data-lang="ruby"># -*- coding: utf-8 -*-
@@ -518,11 +530,20 @@ cv2.imshow('image',aux)
 cv2.waitKey()</code></pre>
 </div>
 </div>
+<div class="imageblock">
+<div class="content">
+<img src="data:image/png;base64," alt="trocaregioes">
+</div>
+<div class="title">Figure 2. troca regiões</div>
+</div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="contagem-de-objetos-e-bolhas"><a class="anchor" href="#contagem-de-objetos-e-bolhas"></a>3. Contagem de objetos e bolhas</h2>
 <div class="sectionbody">
+<div class="paragraph">
+<p>Para realizar a contagem de bolhas em uma figura primeiramente eliminamos as bolhas indefinidas que estão nas regiões das extremidades da imagem e então preenchemos as bolhas com furos para fazer uma contagem total</p>
+</div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-ruby" data-lang="ruby"># -*- coding: utf-8 -*-
@@ -567,6 +588,23 @@ cv2.imshow('image',img)
 cv2.waitKey()</code></pre>
 </div>
 </div>
+<div class="paragraph">
+<p>A saída desse programa para a imagem das bolhas abaixo foi:
+- numero total de objetos =  21
+- Total de objetos com furo:  7</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="data:image/png;base64," alt="bolhas">
+</div>
+<div class="title">Figure 3. Original</div>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="data:image/png;base64," alt="contabolhas">
+</div>
+<div class="title">Figure 4. Modificada pelo código</div>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -606,6 +644,12 @@ plt.show()
 cv2.imshow('image',img)
 cv2.waitKey()</code></pre>
 </div>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="data:image/png;base64," alt="equalize">
+</div>
+<div class="title">Figure 5. Histograma equalizado</div>
 </div>
 </div>
 </div>
@@ -695,6 +739,24 @@ while True:
 
 cv2.destroyAllWindows()</code></pre>
 </div>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="data:image/png;base64," alt="lap">
+</div>
+<div class="title">Figure 6. Filtro Laplaciano</div>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="data:image/png;base64," alt="gauss">
+</div>
+<div class="title">Figure 7. Filtro Gauss</div>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="data:image/png;base64," alt="lapgauss">
+</div>
+<div class="title">Figure 8. Filtro Laplaciano-Gaussiano</div>
 </div>
 </div>
 </div>
@@ -791,12 +853,18 @@ cv2.imwrite("tilt.jpg",result)
 cv2.destroyAllWindows()</code></pre>
 </div>
 </div>
+<div class="imageblock">
+<div class="content">
+<img src="data:image/png;base64," alt="tiltshift">
+</div>
+<div class="title">Figure 9. Filtros TiltShift</div>
+</div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2022-10-23 23:56:47 -0300
+Last updated 2022-12-22 09:30:22 -0300
 </div>
 </div>
 </body>
