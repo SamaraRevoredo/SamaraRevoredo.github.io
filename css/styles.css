@@ -91,6 +91,16 @@
   }
 }
 
+@media (max-width: 768px) {
+    .d-flex {
+        flex-direction: column !important;
+    }
+    .img-fluid {
+        max-width: 100%;
+        height: auto;
+    }
+}
+
 body {
   margin: 0;
   font-family: var(--bs-body-font-family);
